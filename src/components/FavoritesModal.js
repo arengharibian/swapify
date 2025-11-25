@@ -5,13 +5,14 @@ export default function FavoritesModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) {
-      setFavorites(JSON.parse(localStorage.getItem("favorites")) || []);
+      const stored = JSON.parse(localStorage.getItem("favorites")) || [];
+      setFavorites(stored);
     }
   }, [isOpen]);
 
-  const removeFav = (name) => {
+  const removeFromFavorites = (name) => {
     let stored = JSON.parse(localStorage.getItem("favorites")) || [];
-    stored = stored.filter((i) => i.name !== name);
+    stored = stored.filter((item) => item.name !== name);
     localStorage.setItem("favorites", JSON.stringify(stored));
     setFavorites(stored);
   };
@@ -19,22 +20,43 @@ export default function FavoritesModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal">
-      <h2>Your Favorites</h2>
-      {favorites.length === 0 ? (
-        <p>No favorites yet.</p>
-      ) : (
-        <ul>
-          {favorites.map((i) => (
-            <li key={i.name}>
-              <img src={i.image} alt="" style={{ width: 50, height: 50 }} />
-              {i.name}
-              <button onClick={() => removeFav(i.name)}>Remove</button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <button onClick={onClose}>Close</button>
+    <div className="modal-backdrop">
+      <div className="modal-panel">
+        <h2>Your Favorites</h2>
+        {favorites.length === 0 ? (
+          <p className="modal-empty-text">No favorites yet.</p>
+        ) : (
+          <ul className="modal-list">
+            {favorites.map((item) => (
+              <li key={item.name} className="modal-list-item">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="modal-item-image"
+                />
+                <div className="modal-item-info">
+                  <span className="modal-item-title">{item.name}</span>
+                </div>
+                <button
+                  type="button"
+                  className="badge-button danger"
+                  onClick={() => removeFromFavorites(item.name)}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <button
+          type="button"
+          className="ghost-btn full-width modal-close-btn"
+          onClick={onClose}
+        >
+          Close
+        </button>
+      </div>
     </div>
   );
 }

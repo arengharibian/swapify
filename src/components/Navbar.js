@@ -9,65 +9,135 @@ export default function Navbar({ onOpenCart, onOpenFavorites }) {
   useEffect(() => {
     const loggedIn = localStorage.getItem("loggedIn") === "true";
     const name = localStorage.getItem("userName");
-    if (loggedIn && name) setUser(name.split(" ")[0]);
-    else setUser(null);
+    if (loggedIn && name) {
+      setUser(name.split(" ")[0]);
+    } else {
+      setUser(null);
+    }
   }, [location.pathname]);
 
-  const logout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("loggedInEmail");
     localStorage.removeItem("userName");
-    alert("You logged out.");
+    alert("You have been logged out.");
     navigate("/");
   };
 
-  const postListing = () => {
-    if (!localStorage.getItem("loggedIn")) {
-      alert("Sign in first.");
-      return navigate("/signin");
+  const goToCreate = () => {
+    const loggedIn = localStorage.getItem("loggedIn") === "true";
+    if (!loggedIn) {
+      alert("Please sign in to post a listing.");
+      navigate("/signin");
+    } else {
+      navigate("/create");
     }
-    navigate("/create");
   };
 
   return (
-    <header className="navbar">
-      <div className="nav-left">
-        <img src="/images/logo.png" alt="Swapify Logo" className="nav-logo" />
-        <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/browse">Browse</Link>
+    <header className="site-header">
+      {/* TOP BLACK BAR */}
+      <div className="top-bar">
+        <div className="top-bar-left">
+          <img src="/images/logo.png" alt="Swapify Logo" className="top-logo" />
+          <div className="top-brand">
+            <span className="top-brand-title">Swapify</span>
+            <span className="top-brand-subtitle">Campus Marketplace</span>
+          </div>
+        </div>
+
+        <div className="top-bar-search">
+          <input
+            type="text"
+            placeholder="Search product or listing..."
+            aria-label="Search listings"
+          />
+          <button type="button">Search</button>
+        </div>
+
+        <div className="top-bar-right">
+          {user ? (
+            <>
+              <span className="top-user-text">
+                Hi, <b>{user}</b>
+              </span>
+              <button className="top-auth-btn" onClick={handleLogout}>
+                Log out
+              </button>
+            </>
+          ) : (
+            <button
+              className="top-auth-btn"
+              onClick={() => navigate("/signin")}
+            >
+              Sign in
+            </button>
+          )}
+
           <button
-            style={{ background: "none", border: "none", cursor: "pointer" }}
-            onClick={postListing}
+            type="button"
+            className="icon-button"
+            onClick={onOpenFavorites}
+            aria-label="View favorites"
           >
-            Post a Listing
+            <img
+              src="/images/heart-icon.png"
+              alt="Favorites"
+              className="icon-img"
+            />
           </button>
-        </nav>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={onOpenCart}
+            aria-label="View cart"
+          >
+            <img
+              src="/images/cart-icon.png"
+              alt="Cart"
+              className="icon-img"
+            />
+          </button>
+        </div>
       </div>
 
-      <div className="nav-right">
-        {user ? (
-          <>
-            <span>Welcome, <b>{user}</b></span>
-            <button onClick={logout}>Log Out</button>
-          </>
-        ) : (
-          <button onClick={() => navigate("/signin")}>Sign In</button>
-        )}
+      {/* BLUE NAV BAR */}
+      <nav className="main-nav">
+        <div className="main-nav-left">
+          <button type="button" className="category-toggle">
+            <span className="category-toggle-icon">☰</span>
+            <span>Category</span>
+            <span className="category-caret">▾</span>
+          </button>
 
-        <img
-          src="/images/heart-icon.png"
-          alt="Favorites"
-          className="icon-img"
-          onClick={onOpenFavorites}
-        />
-        <img
-          src="/images/cart-icon.png"
-          alt="Cart"
-          className="icon-img"
-          onClick={onOpenCart}
-        />
-      </div>
+          <ul className="main-nav-links">
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/browse">Browse</Link>
+            </li>
+            <li>
+              <button type="button" onClick={goToCreate}>
+                Post a Listing
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div className="main-nav-right">
+          <button type="button" className="text-link" onClick={() => navigate("/browse")}>
+            Best Sellers
+          </button>
+          <button type="button" className="text-link" onClick={() => navigate("/checkout")}>
+            Checkout
+          </button>
+          <button type="button" className="text-link" onClick={() => navigate("/signin")}>
+            My Account
+          </button>
+        </div>
+      </nav>
     </header>
   );
 }
