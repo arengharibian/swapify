@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import CartModal from "./components/CartModal";
+import FavoritesModal from "./components/FavoritesModal";
+
+import Home from "./pages/Home";
+import Browse from "./pages/Browse";
+import CreateListing from "./pages/CreateListing";
+import Checkout from "./pages/Checkout";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 function App() {
+  const [cartOpen, setCartOpen] = useState(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar
+        onOpenCart={() => setCartOpen(true)}
+        onOpenFavorites={() => setFavoritesOpen(true)}
+      />
+
+      <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <FavoritesModal
+        isOpen={favoritesOpen}
+        onClose={() => setFavoritesOpen(false)}
+      />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/browse" element={<Browse />} />
+        <Route path="/create" element={<CreateListing />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </>
   );
 }
 
